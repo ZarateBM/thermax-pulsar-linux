@@ -59,7 +59,11 @@ Creado mediante ingeniería inversa completa del binario original de Windows (`X
 
 ---
 
+<<<<<<< HEAD
 ## Instalación en Ubuntu / Linux (1 Solo Comando)
+=======
+## Instalación en Ubuntu 26 / Linux
+>>>>>>> 89b8f3d5929763749225bae04cdc5b0791abf7d4
 
 No necesitas instalar Rust ni configurar nada manualmente por separado. Ejecuta el instalador provisto:
 
