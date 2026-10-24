@@ -69,38 +69,25 @@ cd thermax-pulsar-linux
 sudo ./install.sh
 ```
 
-El instalador se encargará de todo y te permitirá elegir:
-- **1) Versión Python:** Instalación instantánea en 2 segundos, sin necesidad de compilar ni instalar Rust (demonio CLI ligero).
-- **2) Versión Rust (Recomendada):** Binario compilado nativo ultraligero que incluye el nuevo **Panel Web de Control y Monitoreo**.
-
-También puedes ejecutarlo de forma directa y desatendida:
-```bash
-# Instalación instantánea con Python:
-sudo ./install.sh --python
-
-# Versión Rust con Panel Web integrado:
-sudo ./install.sh --rust
-```
-
-El script se encarga de:
-1. Instalar el ejecutable en `/usr/local/bin/thermax-pulsar`.
-2. Crear la configuración en `/etc/thermax-pulsar/config.toml` (si ya existe una, se conserva).
-3. Instalar las reglas `udev` para que el dispositivo USB funcione con permisos seguros.
-4. Crear, habilitar y arrancar el servicio `systemd` para que se inicie automáticamente con el sistema.
+El instalador se encargará de todo de forma automática:
+1. Compilar el binario nativo optimizado en **Rust** (o utilizar el binario precompilado).
+2. Instalar el ejecutable en `/usr/local/bin/thermax-pulsar`.
+3. Crear la configuración en `/etc/thermax-pulsar/config.toml` (si ya existe una, se conserva).
+4. Instalar las reglas `udev` para que el dispositivo USB funcione con permisos seguros.
+5. Crear, habilitar y arrancar el servicio `systemd` para inicio automático con el sistema.
 
 ### ¿Cómo actualizar una instalación existente?
 
-Si ya lo tienes instalado y quieres actualizar a la última versión (por ejemplo, para obtener el nuevo Panel Web):
+Si ya lo tienes instalado y quieres actualizar a la última versión:
 
 ```bash
 cd thermax-pulsar-linux
 git pull
-sudo ./install.sh --rust
+sudo ./install.sh
 ```
 
 - **Tu configuración se preserva:** El instalador detecta `/etc/thermax-pulsar/config.toml` y **no lo sobreescribe**.
 - **Reinicio automático:** El servicio de fondo `thermax-pulsar.service` se reinicia automáticamente con la nueva versión compilada.
-- **Si venías de Python:** Puedes cambiarte a la versión Rust ejecutando `sudo ./install.sh --rust`; el binario reemplazará al script de Python conservando tu configuración y añadiendo el panel web (`thermax-pulsar web`).
 
 ---
 
