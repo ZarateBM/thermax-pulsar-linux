@@ -1,6 +1,5 @@
 use crate::cooler::Metrics;
 use std::fs;
-use std::path::Path;
 use sysinfo::{Components, CpuRefreshKind, RefreshKind, System};
 
 pub struct CpuMonitor {

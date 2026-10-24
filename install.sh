@@ -39,26 +39,32 @@ echo "[*] Preparando instalación (Modo: ${INSTALL_TYPE^^})..."
 
 # 3. Construir / preparar el ejecutable
 if [ "$INSTALL_TYPE" = "rust" ]; then
-    # Ubicar cargo si está en el HOME del usuario
-    if ! command -v cargo &> /dev/null; then
+    # Si el binario ya fue compilado, instalarlo directamente
+    if [ ! -f "target/release/thermax-pulsar" ]; then
+        # Ubicar cargo si está en el HOME del usuario
         if [ -n "$SUDO_USER" ] && [ -x "$(eval echo ~$SUDO_USER)/.cargo/bin/cargo" ]; then
-            export PATH="$(eval echo ~$SUDO_USER)/.cargo/bin:$PATH"
+            USER_CARGO_DIR="$(eval echo ~$SUDO_USER)/.cargo/bin"
+            export PATH="$USER_CARGO_DIR:$PATH"
+            echo "[*] Compilando binario optimizado en Rust..."
+            sudo -u "$SUDO_USER" env "PATH=$USER_CARGO_DIR:$PATH" cargo build --release
+        else
+            if ! command -v cargo &> /dev/null; then
+                echo "[*] Instalando dependencias de compilación del sistema (apt)..."
+                apt-get update -qq
+                apt-get install -y -qq build-essential pkg-config libudev-dev curl
+
+                echo "[*] Instalando compilador Rust automáticamente..."
+                curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+                export PATH="$HOME/.cargo/bin:$PATH"
+                rustup default stable 2>/dev/null || true
+            fi
+            echo "[*] Compilando binario optimizado en Rust..."
+            cargo build --release
         fi
+    else
+        echo "[*] Binario release detectado en target/release/thermax-pulsar."
     fi
 
-    # Si aún no existe cargo, instalar dependencias y Rust automáticamente
-    if ! command -v cargo &> /dev/null; then
-        echo "[*] Instalando dependencias de compilación del sistema (apt)..."
-        apt-get update -qq
-        apt-get install -y -qq build-essential pkg-config libudev-dev curl
-
-        echo "[*] Instalando compilador Rust automáticamente..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        export PATH="$HOME/.cargo/bin:$PATH"
-    fi
-
-    echo "[*] Compilando binario optimizado en Rust..."
-    cargo build --release
     install -m 755 target/release/thermax-pulsar /usr/local/bin/thermax-pulsar
 
 else

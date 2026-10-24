@@ -1,8 +1,6 @@
 use chrono::Local;
 use hidapi::{HidApi, HidDevice};
 use log::{debug, error, info, warn};
-use std::thread::sleep;
-use std::time::Duration;
 
 pub const VENDOR_ID: u16 = 0x5131;
 pub const PRODUCT_ID: u16 = 0x2007;
