@@ -6,7 +6,7 @@ Creado mediante ingeniería inversa completa del binario original de Windows (`X
 
 ---
 
-## ⚡ Características
+## Características
 
 - **Display de Temperatura Seleccionable**: Puedes elegir si el display principal muestra:
   - `cpu`: Temperatura de la CPU.
@@ -24,7 +24,7 @@ Creado mediante ingeniería inversa completa del binario original de Windows (`X
 
 ---
 
-## 🔬 Protocolo Descubierto (Ingeniería Inversa)
+## Protocolo Descubierto (Ingeniería Inversa)
 
 - **Vendor ID (VID)**: `0x5131`
 - **Product ID (PID)**: `0x2007`
