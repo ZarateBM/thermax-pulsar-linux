@@ -59,39 +59,32 @@ Creado mediante ingeniería inversa completa del binario original de Windows (`X
 
 ---
 
-## 🛠️ Instalación en Ubuntu 26 / Linux
+## Instalación en Ubuntu / Linux (1 Solo Comando)
 
-### 1. Dependencias Previas
-
-En Ubuntu / Debian, instala las dependencias de compilación y librerías HID:
+No necesitas instalar Rust ni configurar nada manualmente por separado. Ejecuta el instalador provisto:
 
 ```bash
-sudo apt update
-sudo apt install -y build-essential pkg-config libudev-dev libusb-1.0-0-dev git
-```
-
-Si aún no tienes Rust instalado:
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
-```
-
-### 2. Compilar e Instalar Automáticamente
-
-Ejecuta el script instalador provisto:
-
-```bash
-cd thermax-pulsar-linux
-chmod +x install.sh
 sudo ./install.sh
 ```
 
+El instalador te permitirá elegir:
+- **1) Versión Python (Recomendada):** Instalación instantánea en 2 segundos, no requiere instalar Rust ni compilar nada (usa el Python nativo de Ubuntu).
+- **2) Versión Rust:** Descarga e instala automáticamente Rust y las herramientas de compilación necesarias, y compila el binario nativo.
+
+También puedes ejecutarlo de forma directa y no interactiva:
+```bash
+# Instalación instantánea con Python (0 descargas adicionales):
+sudo ./install.sh --python
+
+# O si prefieres la versión compilada en Rust:
+sudo ./install.sh --rust
+```
+
 El script se encarga de:
-1. Compilar el binario optimizado con `cargo build --release`.
-2. Instalar el ejecutable en `/usr/local/bin/thermax-pulsar`.
-3. Copiar la configuración a `/etc/thermax-pulsar/config.toml`.
-4. Instalar las reglas `udev` para que el dispositivo USB se pueda comunicar sin permisos especiales.
-5. Instalar y habilitar el servicio `systemd` para que arranque automáticamente con el sistema.
+1. Instalar el ejecutable en `/usr/local/bin/thermax-pulsar`.
+2. Crear la configuración en `/etc/thermax-pulsar/config.toml`.
+3. Instalar las reglas `udev` para que el dispositivo USB funcione con permisos seguros.
+4. Crear, habilitar y arrancar el servicio `systemd` para que se inicie automáticamente con el sistema.
 
 ---
 

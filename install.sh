@@ -2,52 +2,105 @@
 set -e
 
 echo "=========================================================="
-echo " Installing THERMAX 6 PULSAR Linux Driver & Service"
+echo " Instalador THERMAX 6 PULSAR - Driver & Servicio Linux"
 echo "=========================================================="
 
-# Check root permissions
+# 1. Verificar permisos de root
 if [ "$EUID" -ne 0 ]; then
-    echo "[!] Please run this installer with sudo: sudo ./install.sh"
+    echo "[!] Por favor ejecuta este instalador con sudo:"
+    echo "    sudo ./install.sh"
     exit 1
 fi
 
-# Build release binary if not built yet
-if [ ! -f "target/release/thermax-pulsar" ]; then
-    echo "[*] Building release binary with Cargo..."
-    cargo build --release
+INSTALL_TYPE=""
+for arg in "$@"; do
+    case "$arg" in
+        --python) INSTALL_TYPE="python" ;;
+        --rust)   INSTALL_TYPE="rust" ;;
+    esac
+done
+
+# 2. Selección del método si no fue especificado por parámetro
+if [ -z "$INSTALL_TYPE" ]; then
+    echo ""
+    echo "Selecciona el método de instalación:"
+    echo "  1) Versión Python (⚡ Recomendado: Instalación instantánea, 0 descargas, no necesita Rust)"
+    echo "  2) Versión Rust   (🦀 Descarga e instala Rust automáticamente y compila el binario nativo)"
+    echo ""
+    read -p "Opción [1/2] (por defecto 1): " choice
+    case "$choice" in
+        2) INSTALL_TYPE="rust" ;;
+        *) INSTALL_TYPE="python" ;;
+    esac
 fi
 
-echo "[*] Installing binary to /usr/local/bin/thermax-pulsar..."
-install -m 755 target/release/thermax-pulsar /usr/local/bin/thermax-pulsar
+echo ""
+echo "[*] Preparando instalación (Modo: ${INSTALL_TYPE^^})..."
 
-echo "[*] Installing configuration..."
+# 3. Construir / preparar el ejecutable
+if [ "$INSTALL_TYPE" = "rust" ]; then
+    # Ubicar cargo si está en el HOME del usuario
+    if ! command -v cargo &> /dev/null; then
+        if [ -n "$SUDO_USER" ] && [ -x "$(eval echo ~$SUDO_USER)/.cargo/bin/cargo" ]; then
+            export PATH="$(eval echo ~$SUDO_USER)/.cargo/bin:$PATH"
+        fi
+    fi
+
+    # Si aún no existe cargo, instalar dependencias y Rust automáticamente
+    if ! command -v cargo &> /dev/null; then
+        echo "[*] Instalando dependencias de compilación del sistema (apt)..."
+        apt-get update -qq
+        apt-get install -y -qq build-essential pkg-config libudev-dev curl
+
+        echo "[*] Instalando compilador Rust automáticamente..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        export PATH="$HOME/.cargo/bin:$PATH"
+    fi
+
+    echo "[*] Compilando binario optimizado en Rust..."
+    cargo build --release
+    install -m 755 target/release/thermax-pulsar /usr/local/bin/thermax-pulsar
+
+else
+    # Versión Python directa
+    echo "[*] Instalando driver Python en /usr/local/bin/thermax-pulsar..."
+    install -m 755 thermax_pulsar.py /usr/local/bin/thermax-pulsar
+fi
+
+# 4. Instalar configuración
+echo "[*] Configurando /etc/thermax-pulsar/config.toml..."
 mkdir -p /etc/thermax-pulsar
 if [ ! -f /etc/thermax-pulsar/config.toml ]; then
     install -m 644 config.toml /etc/thermax-pulsar/config.toml
-    echo "    Created default config at /etc/thermax-pulsar/config.toml"
+    echo "    -> Archivo de configuración creado."
 else
-    echo "    Existing config found at /etc/thermax-pulsar/config.toml (keeping existing)."
+    echo "    -> Configuración existente detectada (se mantiene la actual)."
 fi
 
-echo "[*] Installing udev rules..."
+# 5. Instalar reglas udev
+echo "[*] Instalando reglas de permisos USB (udev)..."
 install -m 644 udev/99-thermax-pulsar.rules /etc/udev/rules.d/99-thermax-pulsar.rules
 udevadm control --reload-rules
 udevadm trigger
 
-echo "[*] Installing systemd service..."
+# 6. Instalar y activar servicio systemd
+echo "[*] Instalando servicio de inicio automático (systemd)..."
 install -m 644 systemd/thermax-pulsar.service /etc/systemd/system/thermax-pulsar.service
 systemctl daemon-reload
 systemctl enable --now thermax-pulsar.service
 
 echo ""
 echo "=========================================================="
-echo " [OK] Installation complete!"
-echo " Service status:"
+echo " 🎉 [OK] ¡Instalación completada exitosamente!"
+echo " Estado del servicio:"
 systemctl status thermax-pulsar.service --no-pager || true
 echo "=========================================================="
-echo " - To change settings (CPU/GPU mode, interval, unit):"
+echo " - El display se iniciará automáticamente cada vez que prendas tu PC."
+echo " - Para cambiar ajustes (modo CPU/GPU, unidad °C/°F, etc.):"
 echo "     sudo nano /etc/thermax-pulsar/config.toml"
 echo "     sudo systemctl restart thermax-pulsar"
-echo " - To check logs:"
+echo " - Para ver los logs en tiempo real:"
 echo "     journalctl -u thermax-pulsar -f"
+echo " - Para desinstalar en cualquier momento:"
+echo "     sudo ./uninstall.sh"
 echo "=========================================================="
