@@ -95,7 +95,7 @@ El script se encarga de:
 
 ---
 
-## ⚙️ Configuración
+## Configuración
 
 El archivo de configuración principal se encuentra en:
 `/etc/thermax-pulsar/config.toml`
