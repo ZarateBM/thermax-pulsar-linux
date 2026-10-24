@@ -56,7 +56,19 @@ struct Args {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    /// Launch the web-based control panel
+    /// Launch the standalone desktop application window
+    #[command(alias = "gui")]
+    App {
+        /// Address to bind internal backend (default: 127.0.0.1:9876)
+        #[arg(short, long, default_value = "127.0.0.1:9876")]
+        bind: String,
+
+        /// Path to config file
+        #[arg(short, long)]
+        config: Option<String>,
+    },
+
+    /// Launch the web-based control panel (server mode)
     Web {
         /// Address to bind the web server (default: 0.0.0.0:9876)
         #[arg(short, long, default_value = "0.0.0.0:9876")]
@@ -80,6 +92,92 @@ fn resolve_config_path(cli_path: Option<String>) -> String {
     })
 }
 
+fn run_desktop_app(bind: String, cli_config: Option<String>) {
+    let config_path = resolve_config_path(cli_config);
+    let url = format!("http://{}", bind);
+
+    // 1. Check if backend is already listening
+    let is_running = std::net::TcpStream::connect(&bind).is_ok();
+    if !is_running {
+        info!("Starting internal application backend on {}...", bind);
+        let bind_clone = bind.clone();
+        let config_clone = config_path.clone();
+        std::thread::spawn(move || {
+            let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+            rt.block_on(web::server::start_server(config_clone, bind_clone));
+        });
+
+        // Wait up to 2 seconds for server to be ready
+        for _ in 0..40 {
+            if std::net::TcpStream::connect(&bind).is_ok() {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(50));
+        }
+    } else {
+        info!("Internal application backend already active on {}", bind);
+    }
+
+    info!("Opening THERMAX 6 PULSAR application window...");
+
+    // 2. Try window runners in priority order
+    // Priority 1: Dedicated GTK3 + WebKit2 window runner
+    let gtk_window_candidates = [
+        "/usr/local/bin/thermax-pulsar-window",
+        "/usr/local/share/thermax-pulsar/window.py",
+        "assets/thermax-pulsar-window",
+    ];
+
+    for candidate in &gtk_window_candidates {
+        if std::path::Path::new(candidate).exists() {
+            if let Ok(mut child) = std::process::Command::new(candidate).arg(&url).spawn() {
+                let _ = child.wait();
+                return;
+            }
+        }
+    }
+
+    // Priority 2: Chrome / Chromium / Brave / Edge app mode
+    let browser_candidates = [
+        "google-chrome",
+        "google-chrome-stable",
+        "chromium",
+        "chromium-browser",
+        "brave-browser",
+        "microsoft-edge",
+    ];
+
+    let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".to_string());
+    let profile_dir = format!("{}/.config/thermax-pulsar/app-profile", home);
+
+    for browser in &browser_candidates {
+        if let Ok(output) = std::process::Command::new("which").arg(browser).output() {
+            if output.status.success() {
+                let status = std::process::Command::new(browser)
+                    .args([
+                        &format!("--app={}", url),
+                        "--class=thermax-pulsar",
+                        &format!("--user-data-dir={}", profile_dir),
+                        "--window-size=1150,780",
+                        "--no-first-run",
+                        "--no-default-browser-check",
+                    ])
+                    .status();
+                if let Ok(s) = status {
+                    if s.success() {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    // Priority 3: Fallback to system default handler
+    let _ = std::process::Command::new("xdg-open")
+        .arg(&url)
+        .status();
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -94,13 +192,20 @@ fn main() {
         .init();
 
     // ─── Handle subcommands ───
-    if let Some(Commands::Web { bind, config }) = args.command {
-        let config_path = resolve_config_path(config);
-        info!("Launching web control panel...");
+    match args.command {
+        Some(Commands::App { bind, config }) => {
+            run_desktop_app(bind, config);
+            return;
+        }
+        Some(Commands::Web { bind, config }) => {
+            let config_path = resolve_config_path(config);
+            info!("Launching web control panel...");
 
-        let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
-        rt.block_on(web::server::start_server(config_path, bind));
-        return;
+            let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+            rt.block_on(web::server::start_server(config_path, bind));
+            return;
+        }
+        None => {}
     }
 
     // ─── Normal daemon mode ───

@@ -72,9 +72,10 @@ sudo ./install.sh
 El instalador se encargará de todo de forma automática:
 1. Compilar el binario nativo optimizado en **Rust** (o utilizar el binario precompilado).
 2. Instalar el ejecutable en `/usr/local/bin/thermax-pulsar`.
-3. Crear la configuración en `/etc/thermax-pulsar/config.toml` (si ya existe una, se conserva).
-4. Instalar las reglas `udev` para que el dispositivo USB funcione con permisos seguros.
-5. Crear, habilitar y arrancar el servicio `systemd` para inicio automático con el sistema.
+3. Instalar la aplicación en tu **Cajón de Aplicaciones** con su icono oficial (`/usr/share/applications/thermax-pulsar.desktop`).
+4. Crear la configuración en `/etc/thermax-pulsar/config.toml` (si ya existe una, se conserva).
+5. Instalar las reglas `udev` para que el dispositivo USB funcione con permisos seguros.
+6. Crear, habilitar y arrancar el servicio `systemd` para inicio automático con el sistema.
 
 ### ¿Cómo actualizar una instalación existente?
 
@@ -91,57 +92,24 @@ sudo ./install.sh
 
 ---
 
-## Configuración
+## 🖥️ Aplicación de Escritorio
 
-El archivo de configuración principal se encuentra en:
-`/etc/thermax-pulsar/config.toml`
+Al instalar THERMAX 6 PULSAR, se registra automáticamente como una **aplicación de escritorio nativa**:
 
-```toml
-# Modo de visualización:
-#  "cpu"       : Muestra la temperatura del CPU en el display
-#  "gpu"       : Muestra la temperatura de la GPU en el display
-#  "alternate" : Alterna entre CPU y GPU automáticamente
-#  "highest"   : Muestra el componente con mayor temperatura
-display_mode = "cpu"
+- **Desde el menú del sistema:** Abre el cajón de aplicaciones de Ubuntu (Super / Inicio), busca **THERMAX 6 PULSAR** y haz clic en su icono oficial.
+- **Desde la terminal:** También puedes abrir la ventana directamente con:
+  ```bash
+  thermax-pulsar app
+  # o también:
+  thermax-pulsar gui
+  ```
 
-# Unidad de temperatura: "C" o "F"
-temperature_unit = "C"
+Se abrirá una ventana de aplicación dedicada e independiente (sin barra de direcciones web ni pestañas de navegador) que te permite:
+- **Monitor en Tiempo Real:** Dials animados de CPU y GPU, frecuencia, velocidad de ventilador, porcentaje de uso y consumo de energía en Watts.
+- **Ajustes de Configuración:** Cambia el modo de visualización (`cpu`, `gpu`, `alternate`, `highest`), unidad (`°C` / `°F`), intervalos de actualización y offsets.
+- **Gestión del Servicio:** Iniciar, reiniciar o detener el servicio en segundo plano y ver logs en tiempo real.
 
-# Frecuencia de actualización en milisegundos (1000 = 1 segundo)
-update_interval_ms = 1000
-
-# Segundos que permanece cada sensor al usar el modo "alternate"
-alternate_interval_secs = 5
-
-# Detección de GPU: "auto", "nvidia", "amd", "intel", "none"
-gpu_driver = "auto"
-```
-
-Tras modificar la configuración, reinicia el servicio:
-```bash
-sudo systemctl restart thermax-pulsar
-```
-
-### Panel Web de Control (Nuevo)
-
-Ahora puedes configurar y monitorear el cooler desde un **panel web visual** en lugar de editar el archivo de configuración manualmente:
-
-```bash
-# Iniciar el panel web en el puerto predeterminado (9876)
-sudo thermax-pulsar web
-
-# Iniciar en un puerto personalizado
-sudo thermax-pulsar web --bind 0.0.0.0:8080
-
-# Especificar ruta del config
-sudo thermax-pulsar web --config /etc/thermax-pulsar/config.toml
-```
-
-Luego abre tu navegador en `http://localhost:9876` y tendrás acceso a:
-
-- **Monitor en Tiempo Real**: Temperaturas CPU/GPU con dials visuales, utilización, frecuencia, ventilador y potencia.
-- **Configuración Visual**: Cambia el modo de display, unidad de temperatura, intervalos, driver de GPU y offsets desde la interfaz.
-- **Control del Servicio**: Inicia, detiene o reinicia el daemon `thermax-pulsar.service` y visualiza los registros (logs) en vivo.
+*(Opcional: Si deseas ejecutarlo en modo servidor para acceder desde otro equipo en la red local, puedes usar `thermax-pulsar web --bind 0.0.0.0:9876`).*
 
 
 ---

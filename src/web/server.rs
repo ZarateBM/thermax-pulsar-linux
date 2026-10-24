@@ -22,6 +22,7 @@ use crate::hardware::{CpuMonitor, GpuMonitor};
 const INDEX_HTML: &str = include_str!("static/index.html");
 const STYLE_CSS: &str = include_str!("static/style.css");
 const APP_JS: &str = include_str!("static/app.js");
+const ICON_SVG: &str = include_str!("static/icon.svg");
 
 // ═══════════════════════════════════════════════════════════════
 //  SHARED STATE
@@ -118,6 +119,8 @@ pub async fn start_server(config_path: String, bind_addr: String) {
         .route("/", get(serve_index))
         .route("/static/style.css", get(serve_css))
         .route("/static/app.js", get(serve_js))
+        .route("/static/icon.svg", get(serve_icon))
+        .route("/favicon.ico", get(serve_icon))
         // API endpoints
         .route("/api/metrics", get(api_get_metrics))
         .route("/api/config", get(api_get_config))
@@ -166,6 +169,15 @@ async fn serve_js() -> Response {
         StatusCode::OK,
         [(header::CONTENT_TYPE, "application/javascript; charset=utf-8")],
         APP_JS,
+    )
+        .into_response()
+}
+
+async fn serve_icon() -> Response {
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "image/svg+xml")],
+        ICON_SVG,
     )
         .into_response()
 }

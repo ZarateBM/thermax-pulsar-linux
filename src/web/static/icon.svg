@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Outer Glow -->
+    <radialGradient id="outerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="60%" stop-color="#ff2d55" stop-opacity="0.3"/>
+      <stop offset="90%" stop-color="#00f2fe" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Bezel Metallic Gradients -->
+    <linearGradient id="bezelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2d303e"/>
+      <stop offset="25%" stop-color="#181a24"/>
+      <stop offset="50%" stop-color="#2a2c3a"/>
+      <stop offset="75%" stop-color="#151720"/>
+      <stop offset="100%" stop-color="#252736"/>
+    </linearGradient>
+
+    <linearGradient id="bezelRim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#45495e"/>
+      <stop offset="100%" stop-color="#12131a"/>
+    </linearGradient>
+
+    <!-- Display Face Deep Gradient -->
+    <radialGradient id="displayBg" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#12141f"/>
+      <stop offset="70%" stop-color="#090a10"/>
+      <stop offset="100%" stop-color="#040508"/>
+    </radialGradient>
+
+    <!-- Neon Arc Gradients -->
+    <linearGradient id="neonArcRed" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff0055"/>
+      <stop offset="50%" stop-color="#ff2d55"/>
+      <stop offset="100%" stop-color="#ff7b92"/>
+    </linearGradient>
+
+    <linearGradient id="neonArcCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#4facfe"/>
+    </linearGradient>
+
+    <!-- Glass Reflection -->
+    <linearGradient id="glassReflection" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="30%" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ambient Shadow / Glow -->
+  <circle cx="256" cy="260" r="240" fill="url(#outerGlow)"/>
+
+  <!-- Outer Bezel -->
+  <circle cx="256" cy="256" r="236" fill="url(#bezelGrad)" stroke="url(#bezelRim)" stroke-width="4"/>
+
+  <!-- Chamfer Inner Ring -->
+  <circle cx="256" cy="256" r="216" fill="#13141d" stroke="#0a0a0f" stroke-width="3"/>
+
+  <!-- Deep OLED Display Face -->
+  <circle cx="256" cy="256" r="204" fill="url(#displayBg)"/>
+
+  <!-- Radial Tick Markers -->
+  <g stroke="#2c3042" stroke-width="3" stroke-linecap="round" opacity="0.7">
+    <line x1="256" y1="62" x2="256" y2="76"/>
+    <line x1="256" y1="436" x2="256" y2="450"/>
+    <line x1="62" y1="256" x2="76" y2="256"/>
+    <line x1="436" y1="256" x2="450" y2="256"/>
+    <line x1="119" y1="119" x2="130" y2="130"/>
+    <line x1="393" y1="119" x2="382" y2="130"/>
+    <line x1="119" y1="393" x2="130" y2="382"/>
+    <line x1="393" y1="393" x2="382" y2="382"/>
+  </g>
+
+  <!-- Gauge Arc Background Track -->
+  <circle cx="256" cy="256" r="172" fill="none" stroke="#1c1f2e" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="810 270" transform="rotate(135 256 256)"/>
+
+  <!-- Active Neon Gauge Arc (Temp) -->
+  <circle cx="256" cy="256" r="172" fill="none" stroke="url(#neonArcRed)" stroke-width="14" stroke-linecap="round"
+          stroke-dasharray="520 560" transform="rotate(135 256 256)"/>
+
+  <!-- Inner Cyan Secondary Status Arc -->
+  <circle cx="256" cy="256" r="148" fill="none" stroke="url(#neonArcCyan)" stroke-width="6" stroke-linecap="round"
+          stroke-dasharray="320 610" transform="rotate(220 256 256)"/>
+
+  <!-- Sensor Badge (CPU) -->
+  <rect x="216" y="132" width="80" height="26" rx="13" fill="#182234" stroke="#00f2fe" stroke-width="1.5"/>
+  <text x="256" y="150" fill="#00f2fe" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        font-size="14" font-weight="800" text-anchor="middle" letter-spacing="2">CPU</text>
+
+  <!-- Main Temperature Reading -->
+  <text x="238" y="278" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        font-size="110" font-weight="900" text-anchor="middle" letter-spacing="-3">45</text>
+  <text x="326" y="218" fill="url(#neonArcRed)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="800">°C</text>
+
+  <!-- Pulse Wave / Frequency Line -->
+  <path d="M160 324 L200 324 L216 304 L232 344 L248 314 L264 334 L280 324 L352 324"
+        fill="none" stroke="url(#neonArcRed)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Brand Subtitle: THERMAX PULSAR -->
+  <text x="256" y="372" fill="#8892b0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        font-size="16" font-weight="700" text-anchor="middle" letter-spacing="4">THERMAX</text>
+  <text x="256" y="394" fill="#ff2d55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        font-size="12" font-weight="800" text-anchor="middle" letter-spacing="6">PULSAR</text>
+
+  <!-- Glass Lens Reflection Overlay -->
+  <path d="M100 130 A 204 204 0 0 1 412 130 A 204 180 0 0 0 100 130 Z" fill="url(#glassReflection)"/>
+</svg>

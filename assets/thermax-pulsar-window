@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""
+THERMAX 6 PULSAR - Native Desktop Application Window
+Standalone GTK3 + WebKit2 WebView window.
+"""
+
+import os
+import sys
+
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    gi.require_version('WebKit2', '4.1')
+    from gi.repository import Gtk, WebKit2, Gdk, GdkPixbuf, GLib
+except Exception as e:
+    # If WebKit2 4.1 is not available, try 4.0
+    try:
+        import gi
+        gi.require_version('Gtk', '3.0')
+        gi.require_version('WebKit2', '4.0')
+        from gi.repository import Gtk, WebKit2, Gdk, GdkPixbuf, GLib
+    except Exception as e2:
+        print(f"[!] Error loading GTK/WebKit2: {e2}", file=sys.stderr)
+        sys.exit(1)
+
+
+def main():
+    target_url = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:9876"
+
+    # Initialize Window
+    win = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
+    win.set_title("THERMAX 6 PULSAR")
+    win.set_default_size(1150, 780)
+    win.set_position(Gtk.WindowPosition.CENTER)
+
+    # Set Window Icon
+    icon_candidates = [
+        "/usr/share/icons/hicolor/scalable/apps/thermax-pulsar.svg",
+        "/usr/share/icons/hicolor/512x512/apps/thermax-pulsar.png",
+        "/usr/share/pixmaps/thermax-pulsar.png",
+        os.path.join(os.path.dirname(__file__), "icons/thermax-pulsar.svg"),
+        os.path.join(os.path.dirname(__file__), "icons/hicolor/512x512/apps/thermax-pulsar.png"),
+    ]
+    for icon_path in icon_candidates:
+        if os.path.exists(icon_path):
+            try:
+                win.set_icon_from_file(icon_path)
+                break
+            except Exception:
+                pass
+
+    # Dark Theme preference
+    gtk_settings = Gtk.Settings.get_default()
+    if gtk_settings:
+        gtk_settings.set_property("gtk-application-prefer-dark-theme", True)
+
+    # WebKit Settings
+    settings = WebKit2.Settings()
+    settings.set_enable_developer_extras(True)
+    settings.set_enable_webgl(True)
+    settings.set_enable_smooth_scrolling(True)
+    settings.set_hardware_acceleration_policy(WebKit2.HardwareAccelerationPolicy.ALWAYS)
+
+    # Dark background color for webview to prevent white flash
+    webview = WebKit2.WebView.new_with_settings(settings)
+    bg_color = Gdk.RGBA()
+    bg_color.parse("#0a0b10")
+    webview.set_background_color(bg_color)
+
+    # Connect title change from web page
+    def on_title_changed(view, param):
+        title = view.get_title()
+        if title:
+            win.set_title(title)
+
+    webview.connect("notify::title", on_title_changed)
+
+    # Load URL
+    webview.load_uri(target_url)
+
+    # Container
+    win.add(webview)
+    win.connect("destroy", Gtk.main_quit)
+
+    win.show_all()
+    Gtk.main()
+
+
+if __name__ == "__main__":
+    main()

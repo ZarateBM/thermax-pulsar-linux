@@ -1,0 +1,22 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=THERMAX 6 PULSAR
+GenericName=Control de Disipador CPU
+Comment=Configuración y monitoreo en tiempo real del disipador THERMAX 6 PULSAR
+Exec=thermax-pulsar app
+Icon=thermax-pulsar
+Terminal=false
+Categories=Settings;HardwareSettings;
+StartupNotify=true
+StartupWMClass=thermax-pulsar
+Keywords=thermax;pulsar;cooler;cpu;gpu;temperatura;fan;hardware;disipador;
+Actions=Monitor;Config;
+
+[Desktop Action Monitor]
+Name=Monitor de Hardware
+Exec=thermax-pulsar app
+
+[Desktop Action Config]
+Name=Configuración
+Exec=thermax-pulsar app

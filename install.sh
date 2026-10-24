@@ -2,7 +2,7 @@
 set -e
 
 echo "=========================================================="
-echo " Instalador THERMAX 6 PULSAR - Driver & Servicio Linux"
+echo " Instalador THERMAX 6 PULSAR - Driver, App & Servicio Linux"
 echo "=========================================================="
 
 # 1. Verificar permisos de root
@@ -53,7 +53,11 @@ fi
 echo "[*] Instalando binario en /usr/local/bin/thermax-pulsar..."
 install -m 755 target/release/thermax-pulsar /usr/local/bin/thermax-pulsar
 
-# 3. Instalar configuración
+# 3. Instalar ejecutable de ventana GUI nativa
+echo "[*] Instalando ejecutable de ventana gráfica (GTK)..."
+install -m 755 assets/thermax-pulsar-window /usr/local/bin/thermax-pulsar-window
+
+# 4. Instalar configuración
 echo "[*] Configurando /etc/thermax-pulsar/config.toml..."
 mkdir -p /etc/thermax-pulsar
 if [ ! -f /etc/thermax-pulsar/config.toml ]; then
@@ -63,13 +67,38 @@ else
     echo "    -> Configuración existente detectada (se mantiene la actual)."
 fi
 
-# 4. Instalar reglas udev
+# 5. Instalar reglas udev
 echo "[*] Instalando reglas de permisos USB (udev)..."
 install -m 644 udev/99-thermax-pulsar.rules /etc/udev/rules.d/99-thermax-pulsar.rules
 udevadm control --reload-rules
 udevadm trigger
 
-# 5. Instalar y activar servicio systemd
+# 6. Instalar iconos oficiales del sistema
+echo "[*] Instalando iconos de la aplicación..."
+mkdir -p /usr/share/icons/hicolor/scalable/apps
+install -m 644 assets/icons/thermax-pulsar.svg /usr/share/icons/hicolor/scalable/apps/thermax-pulsar.svg
+
+for size in 512 256 128 64 48 32; do
+    if [ -f "assets/icons/hicolor/${size}x${size}/apps/thermax-pulsar.png" ]; then
+        mkdir -p "/usr/share/icons/hicolor/${size}x${size}/apps"
+        install -m 644 "assets/icons/hicolor/${size}x${size}/apps/thermax-pulsar.png" "/usr/share/icons/hicolor/${size}x${size}/apps/thermax-pulsar.png"
+    fi
+done
+
+# Copia de compatibilidad en pixmaps
+mkdir -p /usr/share/pixmaps
+if [ -f "assets/icons/hicolor/256x256/apps/thermax-pulsar.png" ]; then
+    install -m 644 assets/icons/hicolor/256x256/apps/thermax-pulsar.png /usr/share/pixmaps/thermax-pulsar.png
+fi
+
+gtk-update-icon-cache -f -t /usr/share/icons/hicolor 2>/dev/null || true
+
+# 7. Instalar lanzador de escritorio (.desktop) en el cajón de aplicaciones
+echo "[*] Registrando aplicación de escritorio en el cajón de aplicaciones de Linux..."
+install -m 644 assets/thermax-pulsar.desktop /usr/share/applications/thermax-pulsar.desktop
+update-desktop-database /usr/share/applications 2>/dev/null || true
+
+# 8. Instalar y activar servicio systemd
 echo "[*] Instalando servicio de inicio automático (systemd)..."
 install -m 644 systemd/thermax-pulsar.service /etc/systemd/system/thermax-pulsar.service
 systemctl daemon-reload
@@ -79,17 +108,18 @@ systemctl restart thermax-pulsar.service
 echo ""
 echo "=========================================================="
 echo " 🎉 [OK] ¡Instalación completada exitosamente!"
-echo " Estado del servicio:"
+echo " Estado del servicio en segundo plano:"
 systemctl status thermax-pulsar.service --no-pager || true
 echo "=========================================================="
-echo " - El display se iniciará automáticamente cada vez que prendas tu PC."
-echo " - 🌐 Panel Web de Control y Monitoreo:"
-echo "     thermax-pulsar web"
-echo "     (Luego abre http://localhost:9876 en tu navegador)"
-echo " - Para cambiar ajustes manualmente:"
-echo "     sudo nano /etc/thermax-pulsar/config.toml"
-echo "     sudo systemctl restart thermax-pulsar"
-echo " - Para ver los logs en tiempo real:"
+echo " - 🖥️ Aplicación de Escritorio:"
+echo "     Ya está disponible en tu Cajón de Aplicaciones (menú de inicio):"
+echo "     Busca 'THERMAX 6 PULSAR' y ábrela con un solo clic con su propio icono."
+echo ""
+echo " - También puedes iniciar la app desde la terminal con:"
+echo "     thermax-pulsar app"
+echo ""
+echo " - El display se mantendrá activo siempre en segundo plano."
+echo " - Para ver los logs del servicio:"
 echo "     journalctl -u thermax-pulsar -f"
 echo " - Para desinstalar en cualquier momento:"
 echo "     sudo ./uninstall.sh"
