@@ -59,7 +59,7 @@ Creado mediante ingeniería inversa completa del binario original de Windows (`X
 
 ---
 
-## 🛠️ Instalación en Ubuntu 26 / Linux
+## Instalación en Ubuntu 26 / Linux
 
 ### 1. Dependencias Previas
 
