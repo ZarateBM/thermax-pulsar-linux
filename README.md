@@ -128,7 +128,7 @@ sudo systemctl restart thermax-pulsar
 
 ---
 
-## 🔍 Comandos de Gestión del Servicio
+## Comandos de Gestión del Servicio
 
 - **Ver estado en tiempo real:**
   ```bash
@@ -152,7 +152,7 @@ sudo systemctl restart thermax-pulsar
 
 ---
 
-## 🧪 Pruebas Manuales (Línea de Comandos)
+## Pruebas Manuales (Línea de Comandos)
 
 Puedes ejecutar el programa manualmente para hacer pruebas rápidas:
 
@@ -169,7 +169,7 @@ thermax-pulsar --mode alternate --interval 1000
 
 ---
 
-## 📦 Desinstalación
+## Desinstalación
 
 Para desinstalar completamente el servicio y los archivos:
 ```bash
@@ -178,6 +178,6 @@ sudo ./uninstall.sh
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 MIT License.
