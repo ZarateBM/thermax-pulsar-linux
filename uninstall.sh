@@ -20,6 +20,13 @@ rm -f /usr/share/icons/hicolor/scalable/apps/thermax-pulsar.svg
 rm -f /usr/share/icons/hicolor/*/apps/thermax-pulsar.png
 rm -f /usr/share/pixmaps/thermax-pulsar.png
 
+# Remove user-local desktop entry (kept by some DEs in the app hub)
+if [ -n "$SUDO_USER" ]; then
+    USER_HOME=$(eval echo ~"$SUDO_USER")
+    rm -f "$USER_HOME/.local/share/applications/thermax-pulsar.desktop"
+    sudo -u "$SUDO_USER" update-desktop-database "$USER_HOME/.local/share/applications" 2>/dev/null || true
+fi
+
 systemctl daemon-reload
 udevadm control --reload-rules
 update-desktop-database /usr/share/applications 2>/dev/null || true
