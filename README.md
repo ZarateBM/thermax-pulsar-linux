@@ -59,23 +59,21 @@ Creado mediante ingeniería inversa completa del binario original de Windows (`X
 
 ---
 
-<<<<<<< HEAD
-## Instalación en Ubuntu / Linux (1 Solo Comando)
-=======
-## Instalación en Ubuntu 26 / Linux
->>>>>>> 89b8f3d5929763749225bae04cdc5b0791abf7d4
+## Instalación en Ubuntu / Linux
 
-No necesitas instalar Rust ni configurar nada manualmente por separado. Ejecuta el instalador provisto:
+Para instalarlo directamente desde el repositorio en una sola línea de comandos:
 
 ```bash
+git clone https://github.com/ZarateBM/thermax-pulsar-linux.git
+cd thermax-pulsar-linux
 sudo ./install.sh
 ```
 
-El instalador te permitirá elegir:
-- **1) Versión Python (Recomendada):** Instalación instantánea en 2 segundos, no requiere instalar Rust ni compilar nada (usa el Python nativo de Ubuntu).
-- **2) Versión Rust:** Descarga e instala automáticamente Rust y las herramientas de compilación necesarias, y compila el binario nativo.
+El instalador se encargará de todo y te permitirá elegir:
+- **1) Versión Python (Recomendada):** Instalación instantánea en 2 segundos, sin necesidad de compilar ni instalar Rust (usa el entorno nativo de Ubuntu).
+- **2) Versión Rust:** Descarga e instala automáticamente Rust y las herramientas necesarias, compilando el binario nativo.
 
-También puedes ejecutarlo de forma directa y no interactiva:
+También puedes ejecutarlo de forma directa y desatendida:
 ```bash
 # Instalación instantánea con Python (0 descargas adicionales):
 sudo ./install.sh --python
