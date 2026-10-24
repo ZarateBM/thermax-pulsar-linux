@@ -1,0 +1,20 @@
+[Unit]
+Description=THERMAX 6 PULSAR CPU Cooler Display Daemon
+After=network.target multi-user.target
+Wants=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/thermax-pulsar --config /etc/thermax-pulsar/config.toml
+Restart=always
+RestartSec=3
+Nice=10
+MemoryMax=30M
+CPUQuota=5%
+
+# Security sandbox
+ProtectSystem=full
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target

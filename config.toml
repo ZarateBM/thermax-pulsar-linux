@@ -1,0 +1,26 @@
+# ==============================================================================
+# THERMAX 6 PULSAR - Daemon Configuration
+# ==============================================================================
+
+# Display Mode for the primary display dial:
+#  - "cpu"       : Always show CPU temperature on the cooler dial
+#  - "gpu"       : Always show GPU temperature on the cooler dial
+#  - "alternate" : Alternate between CPU and GPU every `alternate_interval_secs`
+#  - "highest"   : Show whichever is currently hotter (CPU or GPU)
+display_mode = "cpu"
+
+# Temperature unit: "C" for Celsius, "F" for Fahrenheit
+temperature_unit = "C"
+
+# Update rate in milliseconds (Default: 1000 ms, min: 250 ms)
+update_interval_ms = 1000
+
+# How many seconds each sensor is shown when display_mode = "alternate"
+alternate_interval_secs = 5
+
+# GPU detection backend: "auto", "nvidia", "amd", "intel", "none"
+gpu_driver = "auto"
+
+# Optional manual offsets (if you want to adjust temperature reading calibration)
+cpu_temp_offset = 0.0
+gpu_temp_offset = 0.0
