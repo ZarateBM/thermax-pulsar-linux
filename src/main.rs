@@ -1,8 +1,9 @@
 mod config;
 mod cooler;
 mod hardware;
+mod web;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use config::{Config, DisplayMode, TempUnit};
 use cooler::{CoolerDevice, Metrics};
 use hardware::{CpuMonitor, GpuMonitor};
@@ -21,6 +22,9 @@ use std::time::{Duration, Instant};
     about = "Ultra-lightweight Linux daemon for THERMAX 6 PULSAR cooler display"
 )]
 struct Args {
+    #[command(subcommand)]
+    command: Option<Commands>,
+
     #[arg(short, long, help = "Path to config file")]
     config: Option<String>,
 
@@ -50,6 +54,32 @@ struct Args {
     verbose: bool,
 }
 
+#[derive(Subcommand, Debug)]
+enum Commands {
+    /// Launch the web-based control panel
+    Web {
+        /// Address to bind the web server (default: 0.0.0.0:9876)
+        #[arg(short, long, default_value = "0.0.0.0:9876")]
+        bind: String,
+
+        /// Path to config file
+        #[arg(short, long)]
+        config: Option<String>,
+    },
+}
+
+fn resolve_config_path(cli_path: Option<String>) -> String {
+    cli_path.unwrap_or_else(|| {
+        if std::path::Path::new("/etc/thermax-pulsar/config.toml").exists() {
+            "/etc/thermax-pulsar/config.toml".to_string()
+        } else if std::path::Path::new("config.toml").exists() {
+            "config.toml".to_string()
+        } else {
+            "config.toml".to_string()
+        }
+    })
+}
+
 fn main() {
     let args = Args::parse();
 
@@ -63,18 +93,20 @@ fn main() {
         .filter_level(log_level)
         .init();
 
+    // ─── Handle subcommands ───
+    if let Some(Commands::Web { bind, config }) = args.command {
+        let config_path = resolve_config_path(config);
+        info!("Launching web control panel...");
+
+        let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+        rt.block_on(web::server::start_server(config_path, bind));
+        return;
+    }
+
+    // ─── Normal daemon mode ───
     info!("Starting THERMAX 6 PULSAR Linux Driver v{}", env!("CARGO_PKG_VERSION"));
 
-    // Find config file: CLI argument -> /etc/thermax-pulsar/config.toml -> ./config.toml
-    let config_path = args.config.unwrap_or_else(|| {
-        if std::path::Path::new("/etc/thermax-pulsar/config.toml").exists() {
-            "/etc/thermax-pulsar/config.toml".to_string()
-        } else if std::path::Path::new("config.toml").exists() {
-            "config.toml".to_string()
-        } else {
-            "".to_string()
-        }
-    });
+    let config_path = resolve_config_path(args.config);
 
     let mut cfg = if !config_path.is_empty() {
         info!("Loading configuration from: {}", config_path);

@@ -70,23 +70,37 @@ sudo ./install.sh
 ```
 
 El instalador se encargará de todo y te permitirá elegir:
-- **1) Versión Python (Recomendada):** Instalación instantánea en 2 segundos, sin necesidad de compilar ni instalar Rust (usa el entorno nativo de Ubuntu).
-- **2) Versión Rust:** Descarga e instala automáticamente Rust y las herramientas necesarias, compilando el binario nativo.
+- **1) Versión Python:** Instalación instantánea en 2 segundos, sin necesidad de compilar ni instalar Rust (demonio CLI ligero).
+- **2) Versión Rust (Recomendada):** Binario compilado nativo ultraligero que incluye el nuevo **Panel Web de Control y Monitoreo**.
 
 También puedes ejecutarlo de forma directa y desatendida:
 ```bash
-# Instalación instantánea con Python (0 descargas adicionales):
+# Instalación instantánea con Python:
 sudo ./install.sh --python
 
-# O si prefieres la versión compilada en Rust:
+# Versión Rust con Panel Web integrado:
 sudo ./install.sh --rust
 ```
 
 El script se encarga de:
 1. Instalar el ejecutable en `/usr/local/bin/thermax-pulsar`.
-2. Crear la configuración en `/etc/thermax-pulsar/config.toml`.
+2. Crear la configuración en `/etc/thermax-pulsar/config.toml` (si ya existe una, se conserva).
 3. Instalar las reglas `udev` para que el dispositivo USB funcione con permisos seguros.
 4. Crear, habilitar y arrancar el servicio `systemd` para que se inicie automáticamente con el sistema.
+
+### ¿Cómo actualizar una instalación existente?
+
+Si ya lo tienes instalado y quieres actualizar a la última versión (por ejemplo, para obtener el nuevo Panel Web):
+
+```bash
+cd thermax-pulsar-linux
+git pull
+sudo ./install.sh --rust
+```
+
+- **Tu configuración se preserva:** El instalador detecta `/etc/thermax-pulsar/config.toml` y **no lo sobreescribe**.
+- **Reinicio automático:** El servicio de fondo `thermax-pulsar.service` se reinicia automáticamente con la nueva versión compilada.
+- **Si venías de Python:** Puedes cambiarte a la versión Rust ejecutando `sudo ./install.sh --rust`; el binario reemplazará al script de Python conservando tu configuración y añadiendo el panel web (`thermax-pulsar web`).
 
 ---
 
@@ -120,6 +134,28 @@ Tras modificar la configuración, reinicia el servicio:
 ```bash
 sudo systemctl restart thermax-pulsar
 ```
+
+### Panel Web de Control (Nuevo)
+
+Ahora puedes configurar y monitorear el cooler desde un **panel web visual** en lugar de editar el archivo de configuración manualmente:
+
+```bash
+# Iniciar el panel web en el puerto predeterminado (9876)
+sudo thermax-pulsar web
+
+# Iniciar en un puerto personalizado
+sudo thermax-pulsar web --bind 0.0.0.0:8080
+
+# Especificar ruta del config
+sudo thermax-pulsar web --config /etc/thermax-pulsar/config.toml
+```
+
+Luego abre tu navegador en `http://localhost:9876` y tendrás acceso a:
+
+- **Monitor en Tiempo Real**: Temperaturas CPU/GPU con dials visuales, utilización, frecuencia, ventilador y potencia.
+- **Configuración Visual**: Cambia el modo de display, unidad de temperatura, intervalos, driver de GPU y offsets desde la interfaz.
+- **Control del Servicio**: Inicia, detiene o reinicia el daemon `thermax-pulsar.service` y visualiza los registros (logs) en vivo.
+
 
 ---
 
