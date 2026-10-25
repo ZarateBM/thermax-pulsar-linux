@@ -1,377 +1,494 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THERMAX 6 PULSAR</title>
-    <meta name="description" content="Panel de control y monitoreo para THERMAX 6 PULSAR CPU Cooler Display">
-    <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+    <title>THERMAX 6 PULSAR - Hardware Monitor</title>
+    <meta name="description" content="Panel de control y monitoreo THERMAX 6 PULSAR">
+    <link rel="icon" type="image/png" href="AppLogo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <!--  HEADER                                                  -->
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <header id="app-header">
-        <div class="header-left">
-            <div class="logo">
-                <img src="/static/icon.svg" class="logo-icon" width="34" height="34" alt="Icon">
-                <span class="logo-text">THERMAX <span class="accent">PULSAR</span></span>
-            </div>
-            <span class="version-badge" id="version-badge">v0.1.0</span>
-        </div>
-        <nav class="header-nav">
-            <button class="nav-btn active" data-panel="monitor" id="nav-monitor">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                <span>Monitor</span>
-            </button>
-            <button class="nav-btn" data-panel="config" id="nav-config">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                <span>Configuración</span>
-            </button>
-            <button class="nav-btn" data-panel="service" id="nav-service">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>Servicio</span>
-            </button>
-        </nav>
-        <div class="header-right">
-            <div class="connection-status" id="connection-status">
-                <span class="status-dot"></span>
-                <span class="status-text">Conectando...</span>
-            </div>
-        </div>
-    </header>
 
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <!--  MAIN CONTENT                                            -->
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <main id="app-main">
+<body class="app-window">
+    <div class="app-container">
 
-        <!-- ─── PANEL: HARDWARE MONITOR ─── -->
-        <section class="panel active" id="panel-monitor">
-            <div class="panel-header">
-                <h1>Hardware Monitor</h1>
-                <div class="temp-unit-toggle" id="temp-unit-display">
-                    <button class="unit-btn active" data-unit="C" id="unit-c-btn">°C</button>
-                    <button class="unit-btn" data-unit="F" id="unit-f-btn">°F</button>
-                </div>
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!--  APP TOP BAR (Windows Style Header)                     -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <header class="app-topbar" id="app-topbar">
+            <div class="topbar-left">
+                <img src="leftTopLogo.png" alt="XYZ" class="brand-logo" id="brand-logo">
+                <a class="by-text" href="https://github.com/ZarateBM" id="app-title">by <strong>ZarateBM</strong></a>
             </div>
 
-            <div class="gauges-grid">
-                <!-- CPU Gauge -->
-                <div class="gauge-card" id="cpu-gauge-card">
-                    <div class="gauge-ring-container">
-                        <svg class="gauge-ring" viewBox="0 0 200 200">
-                            <defs>
-                                <linearGradient id="cpuGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#ff2d55"/>
-                                    <stop offset="100%" stop-color="#ff6b8a"/>
-                                </linearGradient>
-                                <filter id="cpuGlow">
-                                    <feGaussianBlur stdDeviation="4" result="blur"/>
-                                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                </filter>
-                            </defs>
-                            <circle class="gauge-bg" cx="100" cy="100" r="85" stroke="#2a2a3e" stroke-width="10" fill="none" stroke-linecap="round"
-                                stroke-dasharray="401 133" transform="rotate(135 100 100)"/>
-                            <circle class="gauge-fill" id="cpu-gauge-fill" cx="100" cy="100" r="85" stroke="url(#cpuGaugeGrad)" stroke-width="10" fill="none" stroke-linecap="round"
-                                stroke-dasharray="0 534" transform="rotate(135 100 100)" filter="url(#cpuGlow)"/>
+            <div class="topbar-right">
+                <!-- Window Controls -->
+                <div class="window-controls">
+                    <button class="win-btn win-min" id="win-min-btn" title="Minimizar">
+                        <svg width="12" height="2" viewBox="0 0 12 2">
+                            <rect width="12" height="2" fill="currentColor" />
                         </svg>
-                        <div class="gauge-center">
-                            <span class="gauge-value" id="cpu-temp-value">--</span>
-                            <span class="gauge-unit" id="cpu-temp-unit">°C</span>
-                            <span class="gauge-label">CPU</span>
-                        </div>
-                    </div>
-                    <div class="gauge-metrics">
-                        <div class="metric-row">
-                            <span class="metric-icon">◉</span>
-                            <span class="metric-label">CPU Utilization</span>
-                            <span class="metric-value" id="cpu-util-value">--%</span>
-                        </div>
-                        <div class="metric-bar-container">
-                            <div class="metric-bar" id="cpu-util-bar" style="width: 0%"></div>
-                        </div>
-                        <div class="metric-row">
-                            <span class="metric-icon">⚡</span>
-                            <span class="metric-label">CPU Frequency</span>
-                            <span class="metric-value" id="cpu-freq-value">-- MHz</span>
-                        </div>
-                        <div class="metric-row">
-                            <span class="metric-icon">🌀</span>
-                            <span class="metric-label">CPU Fan</span>
-                            <span class="metric-value" id="cpu-fan-value">-- RPM</span>
-                        </div>
-                        <div class="metric-row">
-                            <span class="metric-icon">⚡</span>
-                            <span class="metric-label">CPU Power</span>
-                            <span class="metric-value" id="cpu-power-value">-- W</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GPU Gauge -->
-                <div class="gauge-card" id="gpu-gauge-card">
-                    <div class="gauge-ring-container">
-                        <svg class="gauge-ring" viewBox="0 0 200 200">
-                            <defs>
-                                <linearGradient id="gpuGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#ff2d55"/>
-                                    <stop offset="100%" stop-color="#ff6b8a"/>
-                                </linearGradient>
-                                <filter id="gpuGlow">
-                                    <feGaussianBlur stdDeviation="4" result="blur"/>
-                                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                                </filter>
-                            </defs>
-                            <circle class="gauge-bg" cx="100" cy="100" r="85" stroke="#2a2a3e" stroke-width="10" fill="none" stroke-linecap="round"
-                                stroke-dasharray="401 133" transform="rotate(135 100 100)"/>
-                            <circle class="gauge-fill" id="gpu-gauge-fill" cx="100" cy="100" r="85" stroke="url(#gpuGaugeGrad)" stroke-width="10" fill="none" stroke-linecap="round"
-                                stroke-dasharray="0 534" transform="rotate(135 100 100)" filter="url(#gpuGlow)"/>
-                        </svg>
-                        <div class="gauge-center">
-                            <span class="gauge-value" id="gpu-temp-value">--</span>
-                            <span class="gauge-unit" id="gpu-temp-unit">°C</span>
-                            <span class="gauge-label">GPU</span>
-                        </div>
-                    </div>
-                    <div class="gauge-metrics">
-                        <div class="metric-row">
-                            <span class="metric-icon">◉</span>
-                            <span class="metric-label">GPU Utilization</span>
-                            <span class="metric-value" id="gpu-util-value">--%</span>
-                        </div>
-                        <div class="metric-bar-container">
-                            <div class="metric-bar" id="gpu-util-bar" style="width: 0%"></div>
-                        </div>
-                        <div class="metric-row">
-                            <span class="metric-icon">⚡</span>
-                            <span class="metric-label">GPU Frequency</span>
-                            <span class="metric-value" id="gpu-freq-value">-- MHz</span>
-                        </div>
-                        <div class="metric-row">
-                            <span class="metric-icon">🌀</span>
-                            <span class="metric-label">GPU Fan</span>
-                            <span class="metric-value" id="gpu-fan-value">-- RPM</span>
-                        </div>
-                        <div class="metric-row">
-                            <span class="metric-icon">⚡</span>
-                            <span class="metric-label">GPU Power</span>
-                            <span class="metric-value" id="gpu-power-value">-- W</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ─── PANEL: CONFIGURATION ─── -->
-        <section class="panel" id="panel-config">
-            <div class="panel-header">
-                <h1>Configuración</h1>
-                <p class="panel-subtitle">Ajusta los parámetros del daemon THERMAX PULSAR</p>
-            </div>
-
-            <form id="config-form" autocomplete="off">
-                <div class="config-grid">
-                    <!-- Display Mode -->
-                    <div class="config-card">
-                        <div class="config-card-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff2d55" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                            <h3>Modo de Display</h3>
-                        </div>
-                        <p class="config-desc">Selecciona qué temperatura se muestra en el dial principal del cooler.</p>
-                        <div class="select-wrapper">
-                            <select id="cfg-display-mode" name="display_mode">
-                                <option value="cpu">CPU — Siempre temperatura del CPU</option>
-                                <option value="gpu">GPU — Siempre temperatura de la GPU</option>
-                                <option value="alternate">Alternate — Alterna entre CPU y GPU</option>
-                                <option value="highest">Highest — Muestra el más caliente</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Temperature Unit -->
-                    <div class="config-card">
-                        <div class="config-card-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff2d55" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
-                            <h3>Unidad de Temperatura</h3>
-                        </div>
-                        <p class="config-desc">Elige entre Celsius y Fahrenheit para la pantalla del cooler.</p>
-                        <div class="toggle-group" id="cfg-temp-unit-group">
-                            <button type="button" class="toggle-btn active" data-value="C" id="cfg-unit-c">°C Celsius</button>
-                            <button type="button" class="toggle-btn" data-value="F" id="cfg-unit-f">°F Fahrenheit</button>
-                        </div>
-                    </div>
-
-                    <!-- Update Interval -->
-                    <div class="config-card">
-                        <div class="config-card-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff2d55" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            <h3>Intervalo de Actualización</h3>
-                        </div>
-                        <p class="config-desc">Frecuencia con la que se actualizan las métricas (en milisegundos).</p>
-                        <div class="range-input-group">
-                            <input type="range" id="cfg-interval" name="update_interval_ms" min="250" max="5000" step="50" value="1000">
-                            <div class="range-labels">
-                                <span>250 ms</span>
-                                <span class="range-current" id="cfg-interval-label">1000 ms</span>
-                                <span>5000 ms</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Alternate Interval -->
-                    <div class="config-card" id="alternate-interval-card">
-                        <div class="config-card-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff2d55" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-                            <h3>Intervalo de Alternancia</h3>
-                        </div>
-                        <p class="config-desc">Segundos que se muestra cada sensor cuando el modo es "alternate".</p>
-                        <div class="range-input-group">
-                            <input type="range" id="cfg-alt-interval" name="alternate_interval_secs" min="1" max="30" step="1" value="5">
-                            <div class="range-labels">
-                                <span>1 s</span>
-                                <span class="range-current" id="cfg-alt-interval-label">5 s</span>
-                                <span>30 s</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- GPU Driver -->
-                    <div class="config-card">
-                        <div class="config-card-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff2d55" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M9 2v2M15 20v2M9 20v2M20 15h2M20 9h2M2 15h2M2 9h2"/></svg>
-                            <h3>Driver de GPU</h3>
-                        </div>
-                        <p class="config-desc">Backend de detección de GPU.</p>
-                        <div class="select-wrapper">
-                            <select id="cfg-gpu-driver" name="gpu_driver">
-                                <option value="auto">Auto — Detectar automáticamente</option>
-                                <option value="nvidia">NVIDIA — nvidia-smi</option>
-                                <option value="amd">AMD — sysfs hwmon</option>
-                                <option value="intel">Intel</option>
-                                <option value="none">None — Sin GPU</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Temperature Offsets -->
-                    <div class="config-card">
-                        <div class="config-card-header">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff2d55" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
-                            <h3>Offsets de Temperatura</h3>
-                        </div>
-                        <p class="config-desc">Ajuste manual de calibración de temperatura (en °C).</p>
-                        <div class="offset-inputs">
-                            <div class="offset-field">
-                                <label for="cfg-cpu-offset">CPU Offset</label>
-                                <input type="number" id="cfg-cpu-offset" name="cpu_temp_offset" value="0" step="0.5" min="-20" max="20">
-                                <span class="offset-unit">°C</span>
-                            </div>
-                            <div class="offset-field">
-                                <label for="cfg-gpu-offset">GPU Offset</label>
-                                <input type="number" id="cfg-gpu-offset" name="gpu_temp_offset" value="0" step="0.5" min="-20" max="20">
-                                <span class="offset-unit">°C</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="config-actions">
-                    <button type="submit" class="btn btn-primary" id="btn-save-config">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        Guardar y Aplicar
                     </button>
-                    <button type="button" class="btn btn-secondary" id="btn-reset-config">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                        Restaurar Valores
+                    <button class="win-btn win-close" id="win-close-btn" title="Cerrar">
+                        <svg width="11" height="11" viewBox="0 0 11 11">
+                            <path d="M1 1L10 10M10 1L1 10" stroke="currentColor" stroke-width="1.6"
+                                stroke-linecap="round" />
+                        </svg>
                     </button>
                 </div>
-            </form>
 
-            <div class="toast" id="config-toast">
-                <span class="toast-icon">✓</span>
-                <span class="toast-message" id="toast-message">Configuración guardada exitosamente</span>
-            </div>
-        </section>
-
-        <!-- ─── PANEL: SERVICE STATUS ─── -->
-        <section class="panel" id="panel-service">
-            <div class="panel-header">
-                <h1>Estado del Servicio</h1>
-                <p class="panel-subtitle">Control y monitoreo del daemon thermax-pulsar</p>
-            </div>
-
-            <div class="service-grid">
-                <div class="service-status-card" id="service-status-card">
-                    <div class="service-indicator" id="service-indicator">
-                        <div class="service-pulse"></div>
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                    </div>
-                    <div class="service-info">
-                        <h2 id="service-status-text">Verificando...</h2>
-                        <p id="service-status-detail">thermax-pulsar.service</p>
-                    </div>
-                    <div class="service-actions">
-                        <button class="btn btn-start" id="btn-service-start" disabled>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                            Iniciar
-                        </button>
-                        <button class="btn btn-stop" id="btn-service-stop" disabled>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                            Detener
-                        </button>
-                        <button class="btn btn-restart" id="btn-service-restart" disabled>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                            Reiniciar
-                        </button>
-                    </div>
-                </div>
-
-                <div class="logs-card" id="logs-card">
-                    <div class="logs-header">
-                        <h3>Registros del Servicio</h3>
-                        <button class="btn btn-ghost" id="btn-refresh-logs">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                            Actualizar
-                        </button>
-                    </div>
-                    <div class="logs-container" id="logs-container">
-                        <pre id="logs-content">Cargando registros...</pre>
-                    </div>
-                </div>
-
-                <div class="config-path-card">
-                    <h3>Rutas del Sistema</h3>
-                    <div class="path-row">
-                        <span class="path-label">Config:</span>
-                        <code class="path-value" id="config-path-display">/etc/thermax-pulsar/config.toml</code>
-                    </div>
-                    <div class="path-row">
-                        <span class="path-label">Servicio:</span>
-                        <code class="path-value">thermax-pulsar.service</code>
-                    </div>
-                    <div class="path-row">
-                        <span class="path-label">Binario:</span>
-                        <code class="path-value">/usr/local/bin/thermax-pulsar</code>
-                    </div>
+                <!-- Unit Selector (°C / °F) -->
+                <div class="temp-unit-selector" id="unit-selector">
+                    <button class="unit-option active" data-unit="C" id="unit-c-opt" title="Celsius">
+                        <span class="unit-radio"></span>
+                        <span class="unit-label">°C</span>
+                    </button>
+                    <button class="unit-option" data-unit="F" id="unit-f-opt" title="Fahrenheit">
+                        <span class="unit-radio"></span>
+                        <span class="unit-label">°F</span>
+                    </button>
                 </div>
             </div>
-        </section>
-    </main>
+        </header>
 
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <!--  FOOTER                                                  -->
-    <!-- ═══════════════════════════════════════════════════════ -->
-    <footer id="app-footer">
-        <span class="footer-version" id="footer-version">THERMAX PULSAR v0.1.0</span>
-        <span class="footer-link">github.com/ZarateBM/thermax-pulsar-linux</span>
-    </footer>
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!--  APP BODY (Sidebar + Main Workspace)                     -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <div class="app-body">
 
-    <script src="/static/app.js"></script>
+            <!-- Sidebar Navigation -->
+            <aside class="app-sidebar">
+                <button class="side-nav-btn active" data-panel="monitor" id="side-nav-monitor">
+                    <span class="side-btn-line1">HARDWARE</span>
+                    <span class="side-btn-line2">MONITOR</span>
+                </button>
+
+                <button class="side-nav-btn" data-panel="config" id="side-nav-config"
+                    title="Configuración de Daemon y Sensores">
+                    <span class="side-btn-line1">CONFIGURACIÓN</span>
+                    <span class="side-btn-line2">AJUSTES</span>
+                </button>
+
+                <button class="side-nav-btn" data-panel="service" id="side-nav-service"
+                    title="Estado del Servicio Linux y Registros">
+                    <span class="side-btn-line1">SERVICIO</span>
+                    <span class="side-btn-line2">SISTEMA</span>
+                </button>
+
+                <div class="sidebar-status-pill" id="sidebar-status-pill">
+                    <span class="status-indicator-dot" id="status-indicator-dot"></span>
+                    <span class="status-indicator-label" id="status-indicator-label">En línea</span>
+                </div>
+            </aside>
+
+            <!-- Main Workspace -->
+            <main class="app-workspace">
+
+                <!-- ═══════════════════════════════════════════════════ -->
+                <!--  PANEL 1: HARDWARE MONITOR (Exact Replica)          -->
+                <!-- ═══════════════════════════════════════════════════ -->
+                <section class="view-panel active" id="panel-monitor">
+                    <div class="hardware-cards-container">
+
+                        <!-- CPU CARD -->
+                        <div class="hardware-card" id="cpu-hardware-card">
+                            <!-- Circular Gauge -->
+                            <div class="gauge-wrapper">
+                                <div class="gauge-bezel-outer">
+                                    <div class="gauge-bezel-inner">
+                                        <svg class="gauge-svg" viewBox="0 0 220 220">
+                                            <!-- Dark Track Arc (270° from 135° to 45°) -->
+                                            <circle class="gauge-track" cx="110" cy="110" r="82" fill="none"
+                                                stroke="#2c2e37" stroke-width="12" stroke-linecap="round"
+                                                stroke-dasharray="386.4 128.8" transform="rotate(135 110 110)" />
+                                            <!-- Glowing Neon Red Progress Arc -->
+                                            <circle class="gauge-progress" id="cpu-gauge-arc" cx="110" cy="110" r="82"
+                                                fill="none" stroke="#e60026" stroke-width="12" stroke-linecap="round"
+                                                stroke-dasharray="0 515.2" transform="rotate(135 110 110)" />
+                                        </svg>
+                                        <div class="gauge-face">
+                                            <div class="gauge-temp-display">
+                                                <span class="gauge-temp-number" id="cpu-temp-val">36</span>
+                                                <span class="gauge-temp-unit" id="cpu-temp-unit-label">°C</span>
+                                            </div>
+                                            <div class="gauge-chip-name">CPU</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Metrics List -->
+                            <div class="metrics-list">
+                                <!-- CPU Utilization -->
+                                <div class="metric-block" id="cpu-util-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="cpu-util-fill" style="width: 4%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Pie / Circle Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15">
+                                                <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor"
+                                                    stroke-width="1.6" />
+                                                <path d="M8 8L8 1.5A6.5 6.5 0 0 1 14.5 8Z" fill="currentColor" />
+                                            </svg>
+                                            <span class="metric-name">CPU Utilization</span>
+                                        </div>
+                                        <span class="metric-value-text" id="cpu-util-text">4 %</span>
+                                    </div>
+                                </div>
+
+                                <!-- CPU Frequency -->
+                                <div class="metric-block" id="cpu-freq-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="cpu-freq-fill" style="width: 45%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Equalizer / Waveform Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15"
+                                                fill="currentColor">
+                                                <rect x="2" y="6" width="1.8" height="4" rx="0.9" />
+                                                <rect x="5.5" y="3" width="1.8" height="10" rx="0.9" />
+                                                <rect x="9" y="5" width="1.8" height="6" rx="0.9" />
+                                                <rect x="12.5" y="4" width="1.8" height="8" rx="0.9" />
+                                            </svg>
+                                            <span class="metric-name">CPU Frequency</span>
+                                        </div>
+                                        <span class="metric-value-text" id="cpu-freq-text">2294 MHz</span>
+                                    </div>
+                                </div>
+
+                                <!-- CPU Fan -->
+                                <div class="metric-block" id="cpu-fan-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="cpu-fan-fill" style="width: 0%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Fan Blade Propeller Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15"
+                                                fill="currentColor">
+                                                <path
+                                                    d="M8 6.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm-1-5c0-.6.4-1 1-1 3.3 0 5 3.3 3.5 5.5l-2.7-1.3A3.5 3.5 0 0 0 7 1.5Zm7.5 5.5c.6 0 1 .4 1 1 0 3.3-3.3 5-5.5 3.5l1.3-2.7a3.5 3.5 0 0 0 3.2-1.8ZM8 14.5c0 .6-.4 1-1 1-3.3 0-5-3.3-3.5-5.5l2.7 1.3A3.5 3.5 0 0 0 8 14.5ZM1.5 9c-.6 0-1-.4-1-1 0-3.3 3.3-5 5.5-3.5L4.7 7.2A3.5 3.5 0 0 0 1.5 9Z" />
+                                            </svg>
+                                            <span class="metric-name">CPU Fan</span>
+                                        </div>
+                                        <span class="metric-value-text" id="cpu-fan-text">0 RPM</span>
+                                    </div>
+                                </div>
+
+                                <!-- CPU Power -->
+                                <div class="metric-block" id="cpu-power-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="cpu-power-fill" style="width: 17%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Lightning Bolt Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15"
+                                                fill="currentColor">
+                                                <path d="M9.2 1.5L4 8.5h4.2L6.8 14.5 12 7.5H7.8L9.2 1.5z" />
+                                            </svg>
+                                            <span class="metric-name">CPU Power</span>
+                                        </div>
+                                        <span class="metric-value-text" id="cpu-power-text">17 W</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GPU CARD -->
+                        <div class="hardware-card" id="gpu-hardware-card">
+                            <!-- Circular Gauge -->
+                            <div class="gauge-wrapper">
+                                <div class="gauge-bezel-outer">
+                                    <div class="gauge-bezel-inner">
+                                        <svg class="gauge-svg" viewBox="0 0 220 220">
+                                            <!-- Dark Track Arc (270° from 135° to 45°) -->
+                                            <circle class="gauge-track" cx="110" cy="110" r="82" fill="none"
+                                                stroke="#2c2e37" stroke-width="12" stroke-linecap="round"
+                                                stroke-dasharray="386.4 128.8" transform="rotate(135 110 110)" />
+                                            <!-- Glowing Neon Red Progress Arc -->
+                                            <circle class="gauge-progress" id="gpu-gauge-arc" cx="110" cy="110" r="82"
+                                                fill="none" stroke="#e60026" stroke-width="12" stroke-linecap="round"
+                                                stroke-dasharray="0 515.2" transform="rotate(135 110 110)" />
+                                        </svg>
+                                        <div class="gauge-face">
+                                            <div class="gauge-temp-display">
+                                                <span class="gauge-temp-number" id="gpu-temp-val">38</span>
+                                                <span class="gauge-temp-unit" id="gpu-temp-unit-label">°C</span>
+                                            </div>
+                                            <div class="gauge-chip-name">GPU</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Metrics List -->
+                            <div class="metrics-list">
+                                <!-- GPU Utilization -->
+                                <div class="metric-block" id="gpu-util-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="gpu-util-fill" style="width: 4%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Pie / Circle Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15">
+                                                <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor"
+                                                    stroke-width="1.6" />
+                                                <path d="M8 8L8 1.5A6.5 6.5 0 0 1 14.5 8Z" fill="currentColor" />
+                                            </svg>
+                                            <span class="metric-name">GPU Utilization</span>
+                                        </div>
+                                        <span class="metric-value-text" id="gpu-util-text">4 %</span>
+                                    </div>
+                                </div>
+
+                                <!-- GPU Frequency -->
+                                <div class="metric-block" id="gpu-freq-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="gpu-freq-fill" style="width: 25%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Equalizer / Waveform Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15"
+                                                fill="currentColor">
+                                                <rect x="2" y="6" width="1.8" height="4" rx="0.9" />
+                                                <rect x="5.5" y="3" width="1.8" height="10" rx="0.9" />
+                                                <rect x="9" y="5" width="1.8" height="6" rx="0.9" />
+                                                <rect x="12.5" y="4" width="1.8" height="8" rx="0.9" />
+                                            </svg>
+                                            <span class="metric-name">GPU Frequency</span>
+                                        </div>
+                                        <span class="metric-value-text" id="gpu-freq-text">502 MHz</span>
+                                    </div>
+                                </div>
+
+                                <!-- GPU Fan -->
+                                <div class="metric-block" id="gpu-fan-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="gpu-fan-fill" style="width: 0%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Fan Blade Propeller Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15"
+                                                fill="currentColor">
+                                                <path
+                                                    d="M8 6.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm-1-5c0-.6.4-1 1-1 3.3 0 5 3.3 3.5 5.5l-2.7-1.3A3.5 3.5 0 0 0 7 1.5Zm7.5 5.5c.6 0 1 .4 1 1 0 3.3-3.3 5-5.5 3.5l1.3-2.7a3.5 3.5 0 0 0 3.2-1.8ZM8 14.5c0 .6-.4 1-1 1-3.3 0-5-3.3-3.5-5.5l2.7 1.3A3.5 3.5 0 0 0 8 14.5ZM1.5 9c-.6 0-1-.4-1-1 0-3.3 3.3-5 5.5-3.5L4.7 7.2A3.5 3.5 0 0 0 1.5 9Z" />
+                                            </svg>
+                                            <span class="metric-name">GPU Fan</span>
+                                        </div>
+                                        <span class="metric-value-text" id="gpu-fan-text">0 PRM</span>
+                                    </div>
+                                </div>
+
+                                <!-- GPU Power -->
+                                <div class="metric-block" id="gpu-power-block">
+                                    <div class="metric-track">
+                                        <div class="metric-fill" id="gpu-power-fill" style="width: 15%;"></div>
+                                    </div>
+                                    <div class="metric-info-row">
+                                        <div class="metric-label-group">
+                                            <!-- Lightning Bolt Icon -->
+                                            <svg class="metric-icon" viewBox="0 0 16 16" width="15" height="15"
+                                                fill="currentColor">
+                                                <path d="M9.2 1.5L4 8.5h4.2L6.8 14.5 12 7.5H7.8L9.2 1.5z" />
+                                            </svg>
+                                            <span class="metric-name">GPU Power</span>
+                                        </div>
+                                        <span class="metric-value-text" id="gpu-power-text">15 W</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- ═══════════════════════════════════════════════════ -->
+                <!--  PANEL 2: CONFIGURACIÓN (Windows App Themed)       -->
+                <!-- ═══════════════════════════════════════════════════ -->
+                <section class="view-panel" id="panel-config">
+                    <div class="subpanel-container">
+                        <div class="subpanel-header">
+                            <h2>Configuración del Daemon</h2>
+                            <p>Personaliza el comportamiento del display THERMAX 6 PULSAR</p>
+                        </div>
+
+                        <form id="config-form" class="config-form-grid" autocomplete="off">
+                            <div class="form-card">
+                                <label class="form-card-title">Modo de Pantalla</label>
+                                <p class="form-card-desc">Selecciona qué métrica se muestra en el dial físico del
+                                    cooler.</p>
+                                <div class="custom-select">
+                                    <select id="cfg-display-mode" name="display_mode">
+                                        <option value="cpu">CPU — Siempre temperatura de CPU</option>
+                                        <option value="gpu">GPU — Siempre temperatura de GPU</option>
+                                        <option value="alternate">Alternate — Alterna entre CPU y GPU</option>
+                                        <option value="highest">Highest — Muestra la más alta</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-card">
+                                <label class="form-card-title">Unidad Térmica en Pantalla</label>
+                                <p class="form-card-desc">Escala que se enviará al paquete USB del cooler.</p>
+                                <div class="unit-toggle-pills" id="cfg-temp-unit-group">
+                                    <button type="button" class="pill-btn active" data-value="C">°C Celsius</button>
+                                    <button type="button" class="pill-btn" data-value="F">°F Fahrenheit</button>
+                                </div>
+                            </div>
+
+                            <div class="form-card">
+                                <label class="form-card-title">Frecuencia de Actualización</label>
+                                <p class="form-card-desc">Intervalo de refresco USB hacia la pantalla del cooler.</p>
+                                <div class="slider-group">
+                                    <input type="range" id="cfg-interval" name="update_interval_ms" min="250" max="5000"
+                                        step="50" value="1000">
+                                    <div class="slider-meta">
+                                        <span>250 ms</span>
+                                        <span class="slider-badge" id="cfg-interval-label">1000 ms</span>
+                                        <span>5000 ms</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-card" id="alt-interval-card">
+                                <label class="form-card-title">Intervalo de Alternancia</label>
+                                <p class="form-card-desc">Duración de cada pantalla cuando el modo es Alternate.</p>
+                                <div class="slider-group">
+                                    <input type="range" id="cfg-alt-interval" name="alternate_interval_secs" min="1"
+                                        max="30" step="1" value="5">
+                                    <div class="slider-meta">
+                                        <span>1 s</span>
+                                        <span class="slider-badge" id="cfg-alt-interval-label">5 s</span>
+                                        <span>30 s</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-card">
+                                <label class="form-card-title">Driver / Backend GPU</label>
+                                <p class="form-card-desc">Método de recolección de telemetría de gráficos.</p>
+                                <div class="custom-select">
+                                    <select id="cfg-gpu-driver" name="gpu_driver">
+                                        <option value="auto">Auto — Detección automática</option>
+                                        <option value="nvidia">NVIDIA — nvidia-smi</option>
+                                        <option value="amd">AMD — sysfs hwmon</option>
+                                        <option value="intel">Intel</option>
+                                        <option value="none">None — Sin GPU</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-card">
+                                <label class="form-card-title">Offsets de Calibración (°C)</label>
+                                <p class="form-card-desc">Compensación opcional agregada a los sensores.</p>
+                                <div class="offsets-row">
+                                    <div class="offset-box">
+                                        <span>CPU:</span>
+                                        <input type="number" id="cfg-cpu-offset" name="cpu_temp_offset" value="0"
+                                            step="0.5" min="-20" max="20">
+                                        <span class="unit-tag">°C</span>
+                                    </div>
+                                    <div class="offset-box">
+                                        <span>GPU:</span>
+                                        <input type="number" id="cfg-gpu-offset" name="gpu_temp_offset" value="0"
+                                            step="0.5" min="-20" max="20">
+                                        <span class="unit-tag">°C</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="app-btn app-btn-red" id="btn-save-cfg">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                                        <polyline points="17 21 17 13 7 13 7 21" />
+                                        <polyline points="7 3 7 8 15 8" />
+                                    </svg>
+                                    Guardar y Aplicar
+                                </button>
+                                <button type="button" class="app-btn app-btn-dark" id="btn-reset-cfg">
+                                    Restablecer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- ═══════════════════════════════════════════════════ -->
+                <!--  PANEL 3: SERVICIO LINUX (Control y Logs)          -->
+                <!-- ═══════════════════════════════════════════════════ -->
+                <section class="view-panel" id="panel-service">
+                    <div class="subpanel-container">
+                        <div class="subpanel-header">
+                            <h2>Estado del Servicio Linux</h2>
+                            <p>Administración del daemon systemd thermax-pulsar</p>
+                        </div>
+
+                        <div class="service-box">
+                            <div class="service-summary">
+                                <div class="service-status-bulb" id="service-status-bulb"></div>
+                                <div class="service-titles">
+                                    <h3 id="service-status-headline">Verificando estado...</h3>
+                                    <p id="service-status-subtext">thermax-pulsar.service</p>
+                                </div>
+                                <div class="service-btn-group">
+                                    <button class="app-btn app-btn-small" id="btn-srv-start">Iniciar</button>
+                                    <button class="app-btn app-btn-small" id="btn-srv-stop">Detener</button>
+                                    <button class="app-btn app-btn-small" id="btn-srv-restart">Reiniciar</button>
+                                </div>
+                            </div>
+
+                            <div class="service-logs-box">
+                                <div class="logs-header-bar">
+                                    <span>Registros de Ejecución (journalctl)</span>
+                                    <button class="app-btn-text" id="btn-refresh-srv-logs">Actualizar</button>
+                                </div>
+                                <pre class="logs-body"
+                                    id="service-logs-display">Cargando registros del servicio...</pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!--  APP FOOTER (Matching Windows App)                      -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <footer class="app-footer">
+            <div class="footer-left">
+                <span class="footer-version" id="footer-version-tag">V1.0.0.02</span>
+            </div>
+            <div class="footer-right">
+                <a href="https://www.xyzpcgear.com" target="_blank" class="footer-brand-link">www.xyzpcgear.com</a>
+                <span class="footer-copyright">All rights reserved</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Toast Notification Popup -->
+    <div class="toast-popup" id="toast-popup">
+        <span class="toast-icon">✓</span>
+        <span class="toast-text" id="toast-text">Cambios aplicados</span>
+    </div>
+
+    <script src="app.js"></script>
 </body>
+
 </html>
